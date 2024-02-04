@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import *
+from PIL import Image, ImageTk
 
 root = tk.Tk()
 root.geometry("900x600")
@@ -21,6 +23,12 @@ label.pack(pady=12, padx=10)
 
 status = tk.Label(master=frame, text="Your device is protected!", font=("Roboto", 24), bg=basecolour)
 status.pack(pady=12, padx=10)
+
+image = Image.open('profile.png')
+image = image.resize((100, 100), Image.ANTIALIAS)
+prof = ImageTk.PhotoImage(image)
+profile = tk.Button(master=left_frame, image=prof, borderwidth=0, height=100, width=100)
+profile.pack(pady=10)
 
 #entry1 = tk.Entry(master=frame)
 #entry1.insert(0, "Username")  # Set default text as a placeholder
