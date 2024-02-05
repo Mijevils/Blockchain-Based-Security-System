@@ -28,9 +28,9 @@ class Encrypt():
                 print('{}: {}'.format(self.sha.name, self.sha.hexdigest()))
                 print()
 
-        return self.superhash()
+        return self.makeSuperhash()
 
-    def superhash(self):
+    def makeSuperhash(self):
         """
         Description: Auxiliary function to calculate the hash of the hashstring
         Input: self
