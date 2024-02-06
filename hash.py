@@ -2,6 +2,9 @@ import hashlib
 import os
 
 class Encrypt():
+    """
+    Class to create the superhash given an array of protected files
+    """
     def __init__(self):
         self.superhash = "" # string containing all hashes that will then be converted into a final superhash
         self.sha = hashlib.sha256() # defines the hashing function (sha256)
@@ -24,7 +27,6 @@ class Encrypt():
                 content = opened_file.read()
                 self.sha.update(content)  # hash computed based on file content
                 self.superhash += self.sha.hexdigest()  # hash for this file added to hashstring
-                print('#############################################')
                 print('{}: {}'.format(self.sha.name, self.sha.hexdigest()))
                 print()
 
@@ -41,5 +43,5 @@ class Encrypt():
 
         return self.sha.hexdigest()
         
-a = Encrypt()
-a.makeHash("")
+#a = Encrypt()
+#a.makeHash("")

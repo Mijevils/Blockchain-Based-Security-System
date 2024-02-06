@@ -3,12 +3,20 @@ from tkinter import *
 from PIL import Image, ImageTk
 from tkinter import filedialog
 import os
+from hash import Encrypt
+import threading
+
+
 class GUI():
+    """
+    Class to implement the program's GUI
+    """
     def __init__(self):
         self.root = tk.Tk()
-        self.root.geometry("900x600")
-        self.basecolour = "#a5e07e"
-        self.protectedfiles = []
+        self.root.geometry("900x600")  # size of GUI window
+        self.basecolour = "#a5e07e"  # shade of green used in the background of GUI
+        self.protectedfiles = []  # stores all files that are protected
+        self.encrypt = Encrypt()
 
     def homePage(self):
         """
@@ -70,13 +78,20 @@ class GUI():
         words = "Users\AA\Documents\nUsers\AA\Desktop\nUsers\AA\Music\nAnd nested directories."
         text = tk.Text(master=user_frame, wrap=tk.WORD, width=40, height=5, bg=self.basecolour, font="Roboto", borderwidth=0, highlightthickness=0)
         text.insert(tk.END, words)
-        text.config(state=tk.DISABLED)  # Disable editing
+        text.config(state=tk.DISABLED)  # Disable keyboard editing when code is live
         text.pack(pady=20, padx=10)
         change = tk.Button(master=user_frame, text="Change protected directories", font=("Roboto", 12), command=self.browse)
         change.pack(pady=50,padx=10)
+        calc = tk.Button(master=user_frame, text="Calculate superhash", font=("Roboto", 12), command=lambda: self.encrypt.makeHash(""))
+        calc.pack(pady=20, padx=10)
 
     def browse(self):
-        path = filedialog.askdirectory( #askopenfilenames
+        """
+        Description: Allows the user to select what files to protect upon a button is triggered
+        Input: Self
+        Output: None, but populates protected files array
+        """
+        path = filedialog.askdirectory(  # askopenfilenames for files, currently only directories
             initialdir="/",
             title="Select a File or Directory",
             #filetypes=(
@@ -85,23 +100,24 @@ class GUI():
             #    ("Directory", "*")  # Allow selection of directories
         )
 
-        if path:
-            if os.path.isdir(path):
+        if path:  # checks it exists
+            if os.path.isdir(path):  # checks it is a directory
                 print(f"Selected directory: {path}")
                 for root, dirs, files in os.walk(path):
                     for file in files:
                         # Construct the full file path
                         file_path = os.path.join(root, file)
                         self.protectedfiles.append(file_path)
-            else:
+            else:  # if not a directory then a file
                 print(f"Selected file: {path}")
                 self.protectedfiles.append(path)
-        else:
+        else:  # doesn't exist
             print("No file or directory selected.")
         print(self.protectedfiles)
 
     def run(self):
         self.root.mainloop()
+
 
 a = GUI()
 a.homePage()
