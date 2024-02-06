@@ -15,15 +15,15 @@ class Encrypt():
         Inputs: Self, as well as a string path containing the path of the directory to hash
         Output: The superhash, as a string
         """
-        path = r'C:\Windows\System32\WDI\LogFiles\StartupInfo'
-        for filename in os.listdir(path):  # iterate through all files in given directory
-            f = os.path.join(path, filename)
-            # checking if it is a file
-            if os.path.isfile(f):
-                print(f)  # if file exists, print the name
+        for file in path:
+            #for filename in os.listdir(file):  # iterate through all files in given directory
+            #    f = os.path.join(file, filename)
+            #    # checking if it is a file
+            #    if os.path.isfile(f):
+            #        print(f)  # if file exists, print the name
 
-            fullpath = path + '\\' + filename  # determine full path of the file for hash creation
-            with open(fullpath, 'rb') as opened_file:
+            #    fullpath = each + '\\' + filename  # determine full path of the file for hash creation
+            with open(file, 'rb') as opened_file:
                 content = opened_file.read()
                 self.sha.update(content)  # hash computed based on file content
                 self.superhash += self.sha.hexdigest()  # hash for this file added to hashstring
