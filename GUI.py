@@ -5,6 +5,7 @@ from tkinter import filedialog
 import os
 from hash import Encrypt
 import threading
+from Config import Config
 
 
 class GUI():
@@ -40,12 +41,12 @@ class GUI():
         status.pack(pady=12, padx=10)
 
         ##### IMAGES #####
-        image = Image.open('profile.png').resize((100, 100), Image.ANTIALIAS)
+        image = Image.open('profile.png').resize((100, 100), Image.Resampling.LANCZOS)
         prof = ImageTk.PhotoImage(image)
         profile = tk.Button(master=left_frame, image=prof, borderwidth=0, height=100, width=100, command=self.profile)
         profile.pack(pady=10)
 
-        logo_image = Image.open("logo.png").resize((100, 100), Image.ANTIALIAS)
+        logo_image = Image.open("logo.png").resize((100, 100), Image.Resampling.LANCZOS)
         prep = ImageTk.PhotoImage(logo_image)
         logo = tk.Label(master=top_frame, image=prep, borderwidth=0, height=100, width=100)
         logo.pack(side=RIGHT)
@@ -74,15 +75,16 @@ class GUI():
         label.pack(pady=12, padx=10)
         surv = tk.Label(master=user_frame, text="Files under surveillance:", font=("Roboto", 24), bg=self.basecolour)
         surv.pack(pady=50, padx=10)
-        words = "Users\AA\Documents\nUsers\AA\Desktop\nUsers\AA\Music\nAnd nested directories."
-        text = tk.Text(master=user_frame, wrap=tk.WORD, width=40, height=5, bg=self.basecolour, font="Roboto", borderwidth=0, highlightthickness=0)
-        text.insert(tk.END, words)
-        text.config(state=tk.DISABLED)  # Disable keyboard editing when code is live
-        text.pack(pady=20, padx=10)
+        self.text = tk.Text(master=user_frame, wrap=tk.WORD, width=40, height=5, bg=self.basecolour, font="Roboto", borderwidth=0, highlightthickness=0)
+        self.text.config(state=tk.DISABLED)  # Disable keyboard editing when code is live
+        self.text.pack(pady=20, padx=10)
         change = tk.Button(master=user_frame, text="Change protected directories", font=("Roboto", 12), command=self.browse)
-        change.pack(pady=50,padx=10)
+        change.pack(padx=5, pady=15)
+        clear = tk.Button(master=user_frame, text="Stop protecting files", font=("Roboto", 12), command=self.clearfile)
+        clear.pack(padx=5, pady=20)
         calc = tk.Button(master=user_frame, text="Calculate superhash", font=("Roboto", 12), command=lambda: self.encrypt.makeHash(self.protectedfiles))
-        calc.pack(pady=20, padx=10)
+        calc.pack(padx=5, pady=20)
+
 
     def browse(self):
         """
@@ -107,12 +109,34 @@ class GUI():
                     # Construct the full file path
                     file_path = os.path.join(root, file)
                     self.protectedfiles.append(file_path)
+
+            # clear text
+            self.text.config(state=tk.NORMAL)
+            self.text.delete('1.0', tk.END)
+
+            # Fill text with protected file names
+            for item in self.protectedfiles:
+                self.text.insert(tk.END, f"{item}\n")
+
+            # Disable editing after updating
+            self.text.config(state=tk.DISABLED)
+
         # else:  # if not a directory then a file
         #    print(f"Selected file: {path}")
         #    self.protectedfiles.append(path)
         else:  # doesn't exist
             print("No file or directory selected.")
         print(self.protectedfiles)
+
+
+
+    def clearfile(self):
+        self.protectedfiles.clear()
+
+        # clear text
+        self.text.config(state=tk.NORMAL)
+        self.text.delete('1.0', tk.END)
+
 
     def run(self):
         self.root.mainloop()
