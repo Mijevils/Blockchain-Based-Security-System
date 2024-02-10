@@ -2,6 +2,9 @@ import hashlib
 import os
 
 class Encrypt():
+    """
+    Class to create the superhash given an array of protected files
+    """
     def __init__(self):
         self.superhash = "" # string containing all hashes that will then be converted into a final superhash
         self.sha = hashlib.sha256() # defines the hashing function (sha256)
@@ -12,19 +15,18 @@ class Encrypt():
         Inputs: Self, as well as a string path containing the path of the directory to hash
         Output: The superhash, as a string
         """
-        path = r'C:\Windows\System32\WDI\LogFiles\StartupInfo'
-        for filename in os.listdir(path):  # iterate through all files in given directory
-            f = os.path.join(path, filename)
-            # checking if it is a file
-            if os.path.isfile(f):
-                print(f)  # if file exists, print the name
+        for file in path:
+            #for filename in os.listdir(file):  # iterate through all files in given directory
+            #    f = os.path.join(file, filename)
+            #    # checking if it is a file
+            #    if os.path.isfile(f):
+            #        print(f)  # if file exists, print the name
 
-            fullpath = path + '\\' + filename  # determine full path of the file for hash creation
-            with open(fullpath, 'rb') as opened_file:
+            #    fullpath = each + '\\' + filename  # determine full path of the file for hash creation
+            with open(file, 'rb') as opened_file:
                 content = opened_file.read()
                 self.sha.update(content)  # hash computed based on file content
                 self.superhash += self.sha.hexdigest()  # hash for this file added to hashstring
-                print('#############################################')
                 print('{}: {}'.format(self.sha.name, self.sha.hexdigest()))
                 print()
 
@@ -41,5 +43,5 @@ class Encrypt():
 
         return self.sha.hexdigest()
         
-a = Encrypt()
-a.makeHash("")
+#a = Encrypt()
+#a.makeHash("")
