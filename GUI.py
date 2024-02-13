@@ -42,12 +42,12 @@ class GUI():
         status.pack(pady=12, padx=10)
 
         ##### IMAGES #####
-        image = Image.open('profile.png').resize((100, 100), Image.Resampling.LANCZOS)
+        image = Image.open('resources\images\profile.png').resize((100, 100), Image.Resampling.LANCZOS)
         prof = ImageTk.PhotoImage(image)
         profile = tk.Button(master=left_frame, image=prof, borderwidth=0, height=100, width=100, command=self.profile)
         profile.pack(pady=10)
 
-        logo_image = Image.open("logo.png").resize((100, 100), Image.Resampling.LANCZOS)
+        logo_image = Image.open("resources\images\logo.png").resize((100, 100), Image.Resampling.LANCZOS)
         prep = ImageTk.PhotoImage(logo_image)
         logo = tk.Label(master=top_frame, image=prep, borderwidth=0, height=100, width=100)
         logo.pack(side=RIGHT)
