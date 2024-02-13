@@ -16,8 +16,9 @@ class GUI():
         self.root = tk.Tk()
         self.root.geometry("900x600")  # size of GUI window
         self.basecolour = "#a5e07e"  # shade of green used in the background of GUI
-        self.protectedfiles = []  # stores all directories that are protected
         self.encrypt = Encrypt()
+        self.config = Config()
+        self.protectedfiles = self.config.getProtecteds()  # stores all directories that are protected, reads off config
 
     def homePage(self):
         """
@@ -76,8 +77,10 @@ class GUI():
         surv = tk.Label(master=user_frame, text="Files under surveillance:", font=("Roboto", 24), bg=self.basecolour)
         surv.pack(pady=50, padx=10)
         self.text = tk.Text(master=user_frame, wrap=tk.WORD, width=40, height=5, bg=self.basecolour, font="Roboto", borderwidth=0, highlightthickness=0)
-        self.text.config(state=tk.DISABLED)  # Disable keyboard editing when code is live
         self.text.pack(pady=20, padx=10)
+        for item in self.protectedfiles:  # fill text with protected files.
+            self.text.insert(tk.END, f"{item}\n")
+        self.text.config(state=tk.DISABLED)  # Disable keyboard editing when code is live
         change = tk.Button(master=user_frame, text="Change protected directories", font=("Roboto", 12), command=self.browse)
         change.pack(padx=5, pady=15)
         clear = tk.Button(master=user_frame, text="Stop protecting files", font=("Roboto", 12), command=self.clearfile)
@@ -108,7 +111,9 @@ class GUI():
                 for file in files:
                     # Construct the full file path
                     file_path = os.path.join(root, file)
-                    self.protectedfiles.append(file_path)
+                    if file_path not in self.protectedfiles:  # avoid the addition of duplicates to protected files.
+                        self.protectedfiles.append(file_path)
+                        self.config.writeConfig(file_path)
 
             # clear text
             self.text.config(state=tk.NORMAL)
@@ -129,8 +134,13 @@ class GUI():
         print(self.protectedfiles)
 
 
-
     def clearfile(self):
+        """
+        Description: Clears the register of protected files, both the array and config file
+        Input: None, just self
+        Output: None
+        """
+        self.config.clearConfig()
         self.protectedfiles.clear()
 
         # clear text
