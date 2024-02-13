@@ -135,6 +135,11 @@ class GUI():
 
 
     def clearfile(self):
+        """
+        Description: Clears the register of protected files, both the array and config file
+        Input: None, just self
+        Output: None
+        """
         self.config.clearConfig()
         self.protectedfiles.clear()
 

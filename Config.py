@@ -7,7 +7,7 @@ class Config():
         """
         Description: Function to read config.json and determine what directories should be under protection
         Input: Self
-        Return: The content of config.json
+        Output: The content of config.json
         """
         if os.path.isfile('config.json'):
             with open ('config.json', 'rb') as file:
@@ -19,6 +19,11 @@ class Config():
             print("No file named config.json")
 
     def makeConfig(self):
+        """
+        Description: Function to make a config file in case it is not found.
+        Input: None, just self
+        Output: None
+        """
         if not (os.path.isfile('config.json')):
             with open('config.json', 'x') as f:
                 self.config = f
@@ -26,6 +31,11 @@ class Config():
             print("File config.json already exists.")
 
     def writeConfig(self, path):
+        """
+        Description: Write data to the config file.
+        Input: A string path, containing the path of a protected file.
+        Output: None
+        """
         if not os.path.isfile("config.json"):
             self.makeConfig()
 
@@ -36,6 +46,11 @@ class Config():
             json.dump(data,file)
 
     def clearConfig(self):
+        """
+        Description: Wipes config file.
+        Input: None, just self
+        Output: None
+        """
         if os.path.isfile("config.json"):
             with open('config.json', "r+") as file:
                 file.truncate(0)
@@ -43,6 +58,11 @@ class Config():
             print("No file named config.json")
 
     def getProtecteds(self):
+        """
+        Description: Obtains path array from config file
+        Input: None, just self.
+        Output: String array containing protected file paths.
+        """
         data = self.readConfig()
         return data["paths"]
 
