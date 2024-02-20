@@ -26,13 +26,19 @@ class GUI():
         Input: Self
         Output: Tkinter window containing the GUI
         """
+        for widget in self.root.winfo_children():
+            widget.destroy()  # wipe home window
+
+
         frame = tk.Frame(master=self.root, bg=self.basecolour)
         frame.pack(pady=0, padx=0, fill="both", expand=True)
-
-        left_frame = tk.Frame(master=frame, bg="white", width=100)
+        left_frame = tk.Frame(master=frame, bg="white", width=150)
         left_frame.pack(side="left", fill="y")
+        left_frame.pack_propagate(0)
         top_frame = tk.Frame(master=frame, bg="white", height=75)
         top_frame.pack(side="top", fill="x", anchor="nw")
+        frame.grid_columnconfigure(0, weight=1)  # Allow the left_frame to resize proportionally
+        frame.grid_rowconfigure(0, weight=1)
 
         ##### LABELS #####
         label = tk.Label(master=top_frame, text="Protection program", font=("Roboto", 24), bg="white")
@@ -55,8 +61,13 @@ class GUI():
         ##### Side Labels #####
         files = tk.Label(master=left_frame, text="Files in custody:", font=("Roboto", 12), bg="white")
         files.pack(pady=10, padx=10)
+        text = tk.Text(master=left_frame, wrap=tk.WORD, width=40, height=5, bg="white", font=("Roboto",12), borderwidth=0, highlightthickness=0)
+        text.pack(padx=10)
+        for item in self.protectedfiles:  # fill text with protected files.
+            text.insert(tk.END, f"{item}\n")
+        text.config(state=tk.DISABLED)
         uphist = tk.Label(master=left_frame, text="Upload History:", font=("Roboto", 12), bg="white")
-        uphist.pack(pady=200)
+        uphist.pack(pady=10)
 
         self.root.mainloop()
 
@@ -72,8 +83,17 @@ class GUI():
 
         user_frame = tk.Frame(master=self.root, bg=self.basecolour)
         user_frame.pack(pady=0, padx=0, fill="both", expand=True)
+
+        #### HOME BUTTON ####
+        home = Image.open('resources\images\home.png').convert("RGBA").resize((100, 100), Image.Resampling.LANCZOS)
+        ready = ImageTk.PhotoImage(home)
+        back = tk.Button(master=user_frame, image=ready, borderwidth=0, height=100, width=100, command=self.homePage)
+        back.image = ready
+        back.pack(side="left", anchor='nw', pady=10, padx=0)
+
+        #### LABELS ####
         label = tk.Label(master=user_frame, text="Your profile", font=("Roboto", 24), bg=self.basecolour)
-        label.pack(pady=12, padx=10)
+        label.pack(side="top", pady=12, padx=10)
         surv = tk.Label(master=user_frame, text="Files under surveillance:", font=("Roboto", 24), bg=self.basecolour)
         surv.pack(pady=50, padx=10)
         self.text = tk.Text(master=user_frame, wrap=tk.WORD, width=40, height=5, bg=self.basecolour, font="Roboto", borderwidth=0, highlightthickness=0)
@@ -81,6 +101,8 @@ class GUI():
         for item in self.protectedfiles:  # fill text with protected files.
             self.text.insert(tk.END, f"{item}\n")
         self.text.config(state=tk.DISABLED)  # Disable keyboard editing when code is live
+
+        #### BUTTONS ####
         change = tk.Button(master=user_frame, text="Change protected directories", font=("Roboto", 12), command=self.browse)
         change.pack(padx=5, pady=15)
         clear = tk.Button(master=user_frame, text="Stop protecting files", font=("Roboto", 12), command=self.clearfile)
