@@ -19,6 +19,7 @@ class GUI():
         self.encrypt = Encrypt()
         self.config = Config()
         self.protectedfiles = self.config.getProtecteds()  # stores all directories that are protected, reads off config
+        self.root.protocol("WM_DELETE_WINDOW", self.onClose)
 
     def homePage(self):
         """
@@ -28,7 +29,6 @@ class GUI():
         """
         for widget in self.root.winfo_children():
             widget.destroy()  # wipe home window
-
 
         frame = tk.Frame(master=self.root, bg=self.basecolour)
         frame.pack(pady=0, padx=0, fill="both", expand=True)
@@ -168,6 +168,10 @@ class GUI():
         # clear text
         self.text.config(state=tk.NORMAL)
         self.text.delete('1.0', tk.END)
+
+
+    def onClose(self):
+        self.root.withdraw()
 
 
     def run(self):
