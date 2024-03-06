@@ -171,6 +171,11 @@ class GUI():
 
 
     def onClose(self):
+        """
+        Description: Allows program to withdraw but run anyway
+        Input: None, just self
+        Output: Window appears to close
+        """
         self.root.withdraw()
 
 
