@@ -5,12 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f2a792c0-d57d-474c-bdca-4522bf19a34e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/hardhat/contracts/hash.sol" beforeDir="false" afterPath="$PROJECT_DIR$/hardhat/contracts/hash.sol" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hardhat/hardhat.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/hardhat/hardhat.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/node.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/script.py" beforeDir="false" afterPath="$PROJECT_DIR$/script.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/solidity.py" beforeDir="false" afterPath="$PROJECT_DIR$/solidity.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,7 +36,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.script">
+  <component name="RunManager" selected="Python.GUI">
     <configuration name="GUI" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -146,9 +144,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.GUI" />
         <item itemvalue="Python.script" />
         <item itemvalue="Python.caca" />
-        <item itemvalue="Python.GUI" />
         <item itemvalue="Python.node" />
         <item itemvalue="Python.cw" />
       </list>

@@ -1,93 +1,55 @@
 from web3 import Web3
+import json
+
 
 class Connect():
     def __init__(self):
         self.w3 = self.connect()
-        self.contract = self.loadContract()
 
     def connect(self):
+        """
+        Description: Establishes a connection to an ETH node
+        Input: None, just self
+        Output: Returns the connection value w3
+        """
         w3 = Web3(Web3.HTTPProvider('http://localhost:8545'))
         # Check if the connection is successful
-        if w3.isConnected():
+        if w3.is_connected():
             print("Connected to Ethereum node")
             return w3
         else:
             print("Failed to connect to Ethereum node")
 
-    def loadContract(self):
-        # Replace with your contract ABI and address
-        contract_abi = [
-            {
-                "anonymous": false,
-                "inputs": [
-                    {
-                        "indexed": false,
-                        "internalType": "string",
-                        "name": "newString",
-                        "type": "string"
-                    }
-                ],
-                "name": "StringUpdated",
-                "type": "event"
-            },
-            {
-                "inputs": [],
-                "name": "getString",
-                "outputs": [
-                    {
-                        "internalType": "string",
-                        "name": "",
-                        "type": "string"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "string",
-                        "name": "newString",
-                        "type": "string"
-                    }
-                ],
-                "name": "setString",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            }
-        ]
-        contract_address = '0xd9145CCE52D386f254917e481eB44e9943F39138'  # Ethereum address of the deployed contract
+    def deployContract(self, superhash):
+        """
+        Description: Deploys contract with superhash
+        Input: Superhash string
+        Output: None, but uploads contract to the blockchain
+        """
+        with open('artifacts\\contracts\\hash.sol\\StringStorage.json') as f:
+            contract_data = json.load(f)
 
-        # Create a contract instance
-        contract = self.w3.eth.contract(address=contract_address, abi=contract_abi)
+        abi = contract_data['abi']
+        bytecode = contract_data['bytecode']
 
-        return contract
+        # Set your wallet private key (for local testing purposes)
+        private_key = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'  # account #0
 
-    def uploadString(self, superhash):
-        # Call a function that requires a transaction
-        account = "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4"  # Replace with your Ethereum account address
-        private_key = '0xabcdef...'  # Replace with your private key
-        gas_limit = 100000  # Replace with an appropriate gas limit
-
-        transaction = self.contract.functions.setString(newString).buildTransaction({
-            'from': account,
-            'gas': gas_limit,
-            'gasPrice': self.w3.toWei('20', 'gwei'),
-            'nonce': self.w3.eth.getTransactionCount(account),
+        # Deploy the contract
+        contract = self.w3.eth.contract(abi=abi, bytecode=bytecode)
+        deploy_transaction = contract.constructor(superhash).build_transaction({
+            'from': self.w3.eth.accounts[0],  # Use the first account for deployment
+            'gas': 2000000,  # Adjust gas limit as needed
+            'gasPrice': self.w3.to_wei('20', 'gwei'),  # Adjust gas price as needed
+            'nonce': self.w3.eth.get_transaction_count(self.w3.eth.accounts[0]),
         })
 
-        signed_transaction = self.w3.eth.account.signTransaction(transaction, private_key)
-        tx_hash = self.w3.eth.sendRawTransaction(signed_transaction.rawTransaction)
+        print("Contract deployed")
+        signed_transaction = self.w3.eth.account.sign_transaction(deploy_transaction, private_key)
+        transaction_hash = self.w3.eth.send_raw_transaction(signed_transaction.rawTransaction)
 
-        print("Transaction Hash:", tx_hash)
+        # Wait for the deployment transaction to be mined
+        transaction_receipt = self.w3.eth.wait_for_transaction_receipt(transaction_hash)
 
-    def retrieveString(self):
-        # Call the getString function that doesn't require a transaction (view function)
-        result = self.contract.functions.getString().call()
-        print("Retrieved String:", result)
-
-
-connector = Connect()
-connector.uploadString("NewString123")
-connector.retrieveString()
+        # Contract address
+        contract_address = transaction_receipt['contractAddress']

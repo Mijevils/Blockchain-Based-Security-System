@@ -6,7 +6,7 @@ import os
 from hash import Encrypt
 import threading
 from Config import Config
-
+from solidity import Connect
 
 class GUI():
     """
@@ -18,6 +18,7 @@ class GUI():
         self.basecolour = "#a5e07e"  # shade of green used in the background of GUI
         self.encrypt = Encrypt()
         self.config = Config()
+        self.connect = Connect()
         self.protectedfiles = self.config.getProtecteds()  # stores all directories that are protected, reads off config
         self.root.protocol("WM_DELETE_WINDOW", self.onClose)
 
@@ -110,6 +111,7 @@ class GUI():
         calc = tk.Button(master=user_frame, text="Calculate superhash", font=("Roboto", 12), command=lambda: self.encrypt.makeHash(self.protectedfiles))
         calc.pack(padx=5, pady=20)
 
+        # self.connect.deployContract(self.encrypt.makeHash(self.protectedfiles))  # npx node has to be active for this to work !!
 
     def browse(self):
         """
