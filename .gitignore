@@ -1,0 +1,11 @@
+# Ignore files or directories
+readme.md
+hardhat.config.js
+package.json
+package-lock.json
+artifacts/
+cache/
+contracts/
+node_modules/
+scripts/
+test/
