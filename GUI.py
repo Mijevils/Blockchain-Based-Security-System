@@ -7,6 +7,8 @@ from hash import Encrypt
 import threading
 from Config import Config
 from solidity import Connect
+import time
+from datetime import *
 
 class GUI():
     """
@@ -21,6 +23,8 @@ class GUI():
         self.connect = Connect()
         self.protectedfiles = self.config.getProtecteds()  # stores all directories that are protected, reads off config
         self.root.protocol("WM_DELETE_WINDOW", self.onClose)
+        self.lastUpdate = datetime.now()
+        self.nextUpdate = (self.lastUpdate + timedelta(seconds=2))
 
     def homePage(self):
         """
@@ -69,7 +73,7 @@ class GUI():
         text.config(state=tk.DISABLED)
         uphist = tk.Label(master=left_frame, text="Upload History:", font=("Roboto", 12), bg="white")
         uphist.pack(pady=10)
-
+        self.timeUpload()
         self.root.mainloop()
 
     def profile(self):
@@ -110,8 +114,6 @@ class GUI():
         clear.pack(padx=5, pady=20)
         calc = tk.Button(master=user_frame, text="Calculate superhash", font=("Roboto", 12), command=lambda: self.encrypt.makeHash(self.protectedfiles))
         calc.pack(padx=5, pady=20)
-
-        # self.connect.deployContract(self.encrypt.makeHash(self.protectedfiles))  # npx node has to be active for this to work !!
 
     def browse(self):
         """
@@ -180,6 +182,17 @@ class GUI():
         """
         self.root.withdraw()
 
+    def timeUpload(self):
+        """
+        Description: Function to print "hello" to the console.
+        Input: None, just self.
+        Output: None, but uploads hashes to the eth node every x minutes.
+        """
+        hash = self.encrypt.makeHash(self.protectedfiles)
+        # print(self.protectedfiles)
+        self.connect.deployContract(hash)  # npx node has to be active for this to work !!
+        # print(hash)
+        self.root.after(10000, self.timeUpload)  # time in milliseconds
 
     def run(self):
         self.root.mainloop()
