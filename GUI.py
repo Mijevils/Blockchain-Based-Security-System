@@ -23,10 +23,8 @@ class GUI():
         self.connect = Connect()
         self.protectedfiles = self.config.getProtecteds()  # stores all directories that are protected, reads off config
         self.root.protocol("WM_DELETE_WINDOW", self.onClose)
-        self.lastUpdate = datetime.now()
-        self.nextUpdate = (self.lastUpdate + timedelta(seconds=2))
         self.hash = self.encrypt.makeHash(self.protectedfiles)
-        self.timenext = datetime.now() + timedelta(minutes=1)
+        self.timenext = datetime.now() + timedelta(seconds=5)  # change based on how long to wait until next update
 
     def homePage(self):
         """
@@ -191,7 +189,7 @@ class GUI():
         Output: None, but uploads hashes to the eth node every x minutes.
         """
         if self.timenext.strftime('%Y-%m-%d %H:%M') == datetime.now().strftime('%Y-%m-%d %H:%M'):
-            self.timenext = self.timenext + timedelta(minutes=5)
+            self.timenext = self.timenext + timedelta(seconds=5)
 
             hash = self.encrypt.makeHash(self.protectedfiles)
             if hash != self.hash:
@@ -203,12 +201,11 @@ class GUI():
         self.root.after(10000, self.timeUpload)  # time in milliseconds
 
     def ChangePopup(self):
-        popupRoot = Tk()
+        popupRoot = Toplevel(self.root)
         popupText = tk.Text(master=popupRoot, wrap=tk.WORD, width=40, height=5, bg="white", font="Roboto", borderwidth=0, highlightthickness=0)
         popupText.insert(tk.END, "There has been a change in the protected files.")
         popupText.pack()
         popupRoot.geometry('390x50+700+500')
-        popupRoot.mainloop()
 
     def run(self):
         self.root.mainloop()
