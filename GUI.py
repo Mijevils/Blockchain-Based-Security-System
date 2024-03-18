@@ -25,6 +25,8 @@ class GUI():
         self.root.protocol("WM_DELETE_WINDOW", self.onClose)
         self.lastUpdate = datetime.now()
         self.nextUpdate = (self.lastUpdate + timedelta(seconds=2))
+        self.hash = self.encrypt.makeHash(self.protectedfiles)
+        self.timenext = datetime.now() + timedelta(minutes=1)
 
     def homePage(self):
         """
@@ -188,11 +190,25 @@ class GUI():
         Input: None, just self.
         Output: None, but uploads hashes to the eth node every x minutes.
         """
-        hash = self.encrypt.makeHash(self.protectedfiles)
-        # print(self.protectedfiles)
-        self.connect.deployContract(hash)  # npx node has to be active for this to work !!
-        # print(hash)
+        if self.timenext.strftime('%Y-%m-%d %H:%M') == datetime.now().strftime('%Y-%m-%d %H:%M'):
+            self.timenext = self.timenext + timedelta(minutes=5)
+
+            hash = self.encrypt.makeHash(self.protectedfiles)
+            if hash != self.hash:
+                self.ChangePopup()
+                #### Pause everything until user clicks accept or something
+                self.hash = hash
+                # if user clicks no try and retrieve the file that changed?
+            # self.connect.deployContract(hash)  # npx node has to be active for this to work !!
         self.root.after(10000, self.timeUpload)  # time in milliseconds
+
+    def ChangePopup(self):
+        popupRoot = Tk()
+        popupText = tk.Text(master=popupRoot, wrap=tk.WORD, width=40, height=5, bg="white", font="Roboto", borderwidth=0, highlightthickness=0)
+        popupText.insert(tk.END, "There has been a change in the protected files.")
+        popupText.pack()
+        popupRoot.geometry('390x50+700+500')
+        popupRoot.mainloop()
 
     def run(self):
         self.root.mainloop()
