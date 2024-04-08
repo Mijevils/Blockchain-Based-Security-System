@@ -27,6 +27,7 @@ class GUI():
         self.root.protocol("WM_DELETE_WINDOW", self.onClose)
         self.hash = self.encrypt.makeHash(self.protectedfiles)
         self.timenext = datetime.now() + timedelta(seconds=5)  # change based on how long to wait until next update
+        self.timelast = None
 
     def homePage(self):
         """
@@ -68,6 +69,10 @@ class GUI():
         ##### Side Labels #####
         uphist = tk.Label(master=left_frame, text="Upload History:", font=("Roboto", 12), bg="white")
         uphist.pack(pady=10)
+        self.uptext = tk.Text(master=left_frame, wrap=tk.WORD, width=40, height=15, bg="white", font="Roboto", borderwidth=0, highlightthickness=0)
+        self.uptext.pack(pady=20, padx=10)
+        self.uptext.config(state=tk.DISABLED)
+
         self.timeUpload()
         self.root.mainloop()
 
@@ -184,18 +189,20 @@ class GUI():
         Output: None, but uploads hashes to the eth node every x minutes.
         """
         if self.timenext.strftime('%Y-%m-%d %H:%M') == datetime.now().strftime('%Y-%m-%d %H:%M'):
+            self.timelast = self.timenext.strftime('%Y-%m-%d %H:%M')
             self.timenext = self.timenext + timedelta(seconds=5)
 
             hash = self.encrypt.makeHash(self.protectedfiles)
             if hash != self.hash:
                 # hash = self.connect.getHash()
                 self.ChangePopup()
-                #### Pause everything until user clicks accept or something
                 self.hash = hash
-                # if user clicks no try and retrieve the file that changed?
-            print(hash)
+            # print(hash)
             self.connect.deployContract(hash)  # npx node has to be active for this to work !!
         self.root.after(10000, self.timeUpload)  # time in milliseconds
+        self.uptext.config(state=tk.NORMAL)
+        self.uptext.insert(tk.END, f"{self.timelast}\n")
+        self.uptext.config(state=tk.DISABLED)
 
     def ChangePopup(self):
         answer = messagebox.askyesno("Change in files",
