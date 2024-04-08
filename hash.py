@@ -45,6 +45,7 @@ class Encrypt():
         # print(self.sha.hexdigest())
 
         return sha.hexdigest()
-        
+
+
 #a = Encrypt()
 #a.makeHash("")

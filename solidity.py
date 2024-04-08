@@ -5,6 +5,8 @@ import json
 class Connect():
     def __init__(self):
         self.w3 = self.connect()
+        self.lastContract = None
+        self.currentContract = None
 
     def connect(self):
         """
@@ -26,11 +28,12 @@ class Connect():
         Input: Superhash string
         Output: None, but uploads contract to the blockchain
         """
+        self.lastContract = self.currentContract
         with open('artifacts\\contracts\\hash.sol\\StringStorage.json') as f:
-            contract_data = json.load(f)
+            self.currentContract = json.load(f)
 
-        abi = contract_data['abi']
-        bytecode = contract_data['bytecode']
+        abi = self.currentContract['abi']
+        bytecode = self.currentContract['bytecode']
 
         # Set your wallet private key (for local testing purposes)
         private_key = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'  # account #0
@@ -52,4 +55,15 @@ class Connect():
         transaction_receipt = self.w3.eth.wait_for_transaction_receipt(transaction_hash)
 
         # Contract address
-        contract_address = transaction_receipt['contractAddress']
+        self.currentContract['address'] = transaction_receipt['contractAddress']
+
+
+    def getHash(self):
+        address = self.lastContract['address']
+        abi = self.lastContract['abi']
+        contract = self.w3.eth.contract(abi=abi, address=address)
+        hash = contract.functions.getString().call()
+        print('Hash:', hash)
+
+        return hash
+
