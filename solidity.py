@@ -57,13 +57,3 @@ class Connect():
         # Contract address
         self.currentContract['address'] = transaction_receipt['contractAddress']
 
-
-    def getHash(self):
-        address = self.lastContract['address']
-        abi = self.lastContract['abi']
-        contract = self.w3.eth.contract(abi=abi, address=address)
-        hash = contract.functions.getString().call()
-        print('Hash:', hash)
-
-        return hash
-

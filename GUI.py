@@ -23,6 +23,7 @@ class GUI():
         self.encrypt = Encrypt()
         self.config = Config()
         self.connect = Connect()
+        self.files_cleared = False
         self.protectedfiles = self.config.getProtecteds()  # stores all directories that are protected, reads off config
         self.root.protocol("WM_DELETE_WINDOW", self.onClose)
         self.hash = self.encrypt.makeHash(self.protectedfiles)
@@ -112,8 +113,6 @@ class GUI():
         change.pack(padx=5, pady=15)
         clear = tk.Button(master=user_frame, text="Stop protecting files", font=("Roboto", 12), command=self.clearfile)
         clear.pack(padx=5, pady=20)
-        calc = tk.Button(master=user_frame, text="Calculate superhash", font=("Roboto", 12), command=lambda: self.encrypt.makeHash(self.protectedfiles))
-        calc.pack(padx=5, pady=20)
 
     def browse(self):
         """
@@ -168,7 +167,7 @@ class GUI():
         """
         self.config.clearConfig()
         self.protectedfiles.clear()
-
+        self.files_cleared = True  # Flag to indicate files were manually cleared
         # clear text
         self.text.config(state=tk.NORMAL)
         self.text.delete('1.0', tk.END)
@@ -188,21 +187,29 @@ class GUI():
         Input: None, just self.
         Output: None, but uploads hashes to the eth node every x minutes.
         """
-        if self.timenext.strftime('%Y-%m-%d %H:%M') == datetime.now().strftime('%Y-%m-%d %H:%M'):
+        if self.timenext.strftime('%Y-%m-%d %H:%M') >= datetime.now().strftime('%Y-%m-%d %H:%M'):
+            # print(f"Process started {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             self.timelast = self.timenext.strftime('%Y-%m-%d %H:%M')
-            self.timenext = self.timenext + timedelta(seconds=5)
 
             hash = self.encrypt.makeHash(self.protectedfiles)
-            if hash != self.hash:
-                # hash = self.connect.getHash()
+
+            if self.files_cleared:
+                self.files_cleared = False  # Reset the flag
+
+            elif hash != self.hash:
                 self.ChangePopup()
                 self.hash = hash
             # print(hash)
             self.connect.deployContract(hash)  # npx node has to be active for this to work !!
-        self.root.after(10000, self.timeUpload)  # time in milliseconds
-        self.uptext.config(state=tk.NORMAL)
-        self.uptext.insert(tk.END, f"{self.timelast}\n")
-        self.uptext.config(state=tk.DISABLED)
+
+            self.uptext.config(state=tk.NORMAL)
+            self.uptext.insert(tk.END, f"{self.timelast}\n")
+            self.uptext.config(state=tk.DISABLED)
+
+        self.jump = 10  # determine how many seconds between contracts
+        self.timenext = self.timenext + timedelta(seconds=self.jump)
+        self.root.after(self.jump*1000, self.timeUpload)  # time in milliseconds
+
 
     def ChangePopup(self):
         answer = messagebox.askyesno("Change in files",
@@ -213,13 +220,6 @@ class GUI():
             sys.exit(1)
         else:
             messagebox.showinfo("Response", "Resuming upload.")
-        # popupRoot = Toplevel(self.root)
-        # button = tk.Label(popupRoot, text="Warning", command=self.halt)
-        # button.pack(pady=20)
-        # popupText = tk.Text(master=popupRoot, wrap=tk.WORD, width=40, height=5, bg="white", font="Roboto", borderwidth=0, highlightthickness=0)
-        # popupText.insert(tk.END, "There has been a change in the protected files. If this was not you, or you didn't trigger it in any way (installing a program may have changed these files) we recommend reaching out to a professional.")
-        # popupText.pack()
-        # popupRoot.geometry('390x50+700+500')
 
     def run(self):
         self.root.mainloop()

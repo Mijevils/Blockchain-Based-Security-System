@@ -16,21 +16,17 @@ class Encrypt():
         """
         self.superhash = ""
 
-        for file in path:
-            sha = hashlib.sha256()  # defines the hashing function (sha256)
-            #for filename in os.listdir(file):  # iterate through all files in given directory
-            #    f = os.path.join(file, filename)
-            #    # checking if it is a file
-            #    if os.path.isfile(f):
-            #        print(f)  # if file exists, print the name
-
-            #    fullpath = each + '\\' + filename  # determine full path of the file for hash creation
-            with open(file, 'rb') as opened_file:
-                content = opened_file.read()
-                sha.update(content)  # hash computed based on file content
-                self.superhash += sha.hexdigest()  # hash for this file added to hashstring
-                # print('{}: {}'.format(sha.name, sha.hexdigest()))
-                # print()
+        try:
+            for file in path:
+                sha = hashlib.sha256()  # defines the hashing function (sha256)
+                with open(file, 'rb') as opened_file:
+                    content = opened_file.read()
+                    sha.update(content)  # hash computed based on file content
+                    self.superhash += sha.hexdigest()  # hash for this file added to hashstring
+                    # print('{}: {}'.format(sha.name, sha.hexdigest()))
+                    # print()
+        except FileNotFoundError:
+            print(f"File not found: {file}")
 
         return self.makeSuperhash()
 
@@ -43,9 +39,8 @@ class Encrypt():
         sha = hashlib.sha256()
         sha.update(self.superhash.encode('utf-8')) # creation of superhash with hashstring
         # print(self.sha.hexdigest())
-
         return sha.hexdigest()
 
 
 #a = Encrypt()
-#a.makeHash("")
+#a.makeHash()

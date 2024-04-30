@@ -16,7 +16,8 @@ class Config():
                 else:
                     return json.load(file)
         else:
-            print("No file named config.json")
+            self.makeConfig()
+            return {"paths" : []}
 
     def makeConfig(self):
         """
